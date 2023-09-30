@@ -110,7 +110,7 @@ class A2C(OnPolicyAlgorithm):
                 spaces.MultiDiscrete,
                 spaces.MultiBinary,
             ),
-            save_rollouts_path=save_rollouts_path
+            save_rollouts_path=save_rollouts_path   
         )
 
         self.normalize_advantage = normalize_advantage

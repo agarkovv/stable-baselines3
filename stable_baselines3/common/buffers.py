@@ -377,7 +377,7 @@ class RolloutBuffer(BaseBuffer):
         self.gae_lambda = gae_lambda
         self.gamma = gamma
         self.generator_ready = False
-        
+
         self.save_rollouts_path = save_rollouts_path
         self.stored_observations = np.empty((0, self.n_envs, *self.obs_shape), dtype=np.float32)
         self.stored_actions = np.empty((0, self.n_envs, self.action_dim), dtype=np.float32)
