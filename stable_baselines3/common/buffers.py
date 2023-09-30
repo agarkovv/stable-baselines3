@@ -518,9 +518,9 @@ class RolloutBuffer(BaseBuffer):
         S, N = self.stored_observations.shape[:2]
         np.savez(
             file=filename,
-            states=self.stored_observations.reshape(shape=(S*N, -1), order='F'),
-            actions=self.stored_actions.reshape(shape=(S*N, -1), order='F'),
-            rewards=self.stored_rewards.reshape(shape=(S*N, -1), order='F'),
+            states=self.stored_observations.reshape((S*N, -1), order='F'),
+            actions=self.stored_actions.reshape((S*N, -1), order='F'),
+            rewards=self.stored_rewards.reshape((S*N, -1), order='F'),
         )
 
         return os.path.basename(filename)
