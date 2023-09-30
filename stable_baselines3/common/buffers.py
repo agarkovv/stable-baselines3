@@ -16,6 +16,7 @@ from stable_baselines3.common.type_aliases import (
 from stable_baselines3.common.utils import get_device
 from stable_baselines3.common.vec_env import VecNormalize
 import os
+import uuid
 
 try:
     # Check memory used by replay buffer when possible
@@ -508,10 +509,11 @@ class RolloutBuffer(BaseBuffer):
         self.stored_rewards = np.concatenate((self.stored_rewards, self.rewards), axis=0)
 
     def os_store(self):
+        id = uuid.uuid4()
         if self.save_rollouts_path[-1] == '/':
-            filename = self.save_rollouts_path + 'trajectories.npz'
+            filename = self.save_rollouts_path + f'trajectories-{id}.npz'
         else:
-            filename = self.save_rollouts_path + '/trajectories.npz'
+            filename = self.save_rollouts_path + f'/trajectories-{id}.npz'
         
         # [train_steps, n_envs]
         S, N = self.stored_observations.shape[:2]
