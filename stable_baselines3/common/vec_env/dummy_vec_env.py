@@ -140,8 +140,7 @@ class DummyVecEnv(VecEnv):
 
 
 class DarkDummyVecEnv(DummyVecEnv):
-    def __init__(self, env_fns: List[Callable[[], gym.Env]], vec_env_kwargs: Optional[Dict[str, Any]] = None):
+    def __init__(self, env_fns: List[Callable[[], gym.Env]], goal_pos: Optional[Dict[str, Any]] = None):
         super.__init__(env_fns)
-        for goal_pos_key, goals in vec_env_kwargs:
-            for vec_env_rank, goal_pos_value in enumerate(goals):
-                self.envs[vec_env_rank].goal_pos = goal_pos_value
+        for vec_env_rank, goal_pos_value in enumerate(goal_pos):
+            self.envs[vec_env_rank].goal_pos = goal_pos_value
