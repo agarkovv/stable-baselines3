@@ -15,6 +15,7 @@ from stable_baselines3.common.type_aliases import (
 )
 from stable_baselines3.common.utils import get_device
 from stable_baselines3.common.vec_env import VecNormalize
+import os
 
 try:
     # Check memory used by replay buffer when possible
@@ -370,11 +371,13 @@ class RolloutBuffer(BaseBuffer):
         gae_lambda: float = 1,
         gamma: float = 0.99,
         n_envs: int = 1,
+        save_rollouts_path: Optional[str] = None
     ):
         super().__init__(buffer_size, observation_space, action_space, device, n_envs=n_envs)
         self.gae_lambda = gae_lambda
         self.gamma = gamma
         self.generator_ready = False
+        self.save_rollouts_path = save_rollouts_path
         self.reset()
 
     def reset(self) -> None:
@@ -387,6 +390,15 @@ class RolloutBuffer(BaseBuffer):
         self.log_probs = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.advantages = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.generator_ready = False
+
+        self.stored_observations = np.empty((0, self.n_envs, *self.obs_shape), dtype=np.float32)
+        self.stored_actions = np.empty((0, self.n_envs, self.action_dim), dtype=np.float32)
+        self.stored_rewards = np.empty((0, self.n_envs), dtype=np.float32)
+        # self.stored_returns = np.zeros((0, self.n_envs), dtype=np.float32)
+        # self.stored_episode_starts = np.zeros((0, self.n_envs), dtype=np.float32)
+        # self.stored_values = np.zeros((0, self.n_envs), dtype=np.float32)
+        # self.stored_log_probs = np.zeros((0, self.n_envs), dtype=np.float32)
+        # self.stored_advantages = np.zeros((0, self.n_envs), dtype=np.float32)
         super().reset()
 
     def compute_returns_and_advantage(self, last_values: th.Tensor, dones: np.ndarray) -> None:
@@ -493,6 +505,25 @@ class RolloutBuffer(BaseBuffer):
         while start_idx < self.buffer_size * self.n_envs:
             yield self._get_samples(indices[start_idx : start_idx + batch_size])
             start_idx += batch_size
+
+    def store_rollouts(self):
+        self.stored_observations = np.concatenate((self.stored_observations, self.observations), axis=0)
+        self.stored_actions = np.concatenate((self.stored_actions, self.actions), axis=0)
+        self.stored_rewards = np.concatenate((self.stored_rewards, self.rewards), axis=0)
+
+    def os_store(self):
+        filename = os.path.join(self.save_rollouts_path, 'trajectories.npz')
+        
+        # [train_steps, n_envs]
+        S, N = self.stored_observations.shape[:2]
+        np.savez(
+            file=filename,
+            states=self.stored_observations.reshape(shape=(S*N, -1), order='F'),
+            actions=self.stored_actions.reshape(shape=(S*N, -1), order='F'),
+            rewards=self.stored_rewards.reshape(shape=(S*N, -1), order='F'),
+        )
+
+        return os.path.basename(filename)
 
     def _get_samples(
         self,

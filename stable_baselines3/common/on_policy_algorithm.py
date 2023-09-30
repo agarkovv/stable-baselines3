@@ -77,6 +77,7 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         device: Union[th.device, str] = "auto",
         _init_setup_model: bool = True,
         supported_action_spaces: Optional[Tuple[Type[spaces.Space], ...]] = None,
+        save_rollouts_path: Optional[str] = None
     ):
         super().__init__(
             policy=policy,
@@ -101,6 +102,8 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         self.vf_coef = vf_coef
         self.max_grad_norm = max_grad_norm
 
+        self.save_rollouts_path=save_rollouts_path
+
         if _init_setup_model:
             self._setup_model()
 
@@ -118,6 +121,7 @@ class OnPolicyAlgorithm(BaseAlgorithm):
             gamma=self.gamma,
             gae_lambda=self.gae_lambda,
             n_envs=self.n_envs,
+            save_rollouts_path=self.save_rollouts_path
         )
         # pytype:disable=not-instantiable
         self.policy = self.policy_class(  # type: ignore[assignment]
@@ -266,6 +270,8 @@ class OnPolicyAlgorithm(BaseAlgorithm):
 
         while self.num_timesteps < total_timesteps:
             continue_training = self.collect_rollouts(self.env, callback, self.rollout_buffer, n_rollout_steps=self.n_steps)
+            if self.save_rollouts_path is not None:
+                self.rollout_buffer.store_rollouts()
 
             if continue_training is False:
                 break
@@ -290,6 +296,8 @@ class OnPolicyAlgorithm(BaseAlgorithm):
             self.train()
 
         callback.on_training_end()
+        if self.save_rollouts_path is not None:
+            self.rollout_buffer.os_store()
 
         return self
 
