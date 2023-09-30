@@ -82,6 +82,7 @@ class A2C(OnPolicyAlgorithm):
         verbose: int = 0,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
+        save_rollouts_path: Optional[str] = None,
         _init_setup_model: bool = True,
     ):
         super().__init__(
@@ -109,6 +110,7 @@ class A2C(OnPolicyAlgorithm):
                 spaces.MultiDiscrete,
                 spaces.MultiBinary,
             ),
+            save_rollouts_path=save_rollouts_path
         )
 
         self.normalize_advantage = normalize_advantage
