@@ -512,7 +512,10 @@ class RolloutBuffer(BaseBuffer):
         self.stored_rewards = np.concatenate((self.stored_rewards, self.rewards), axis=0)
 
     def os_store(self):
-        filename = os.path.join(self.save_rollouts_path, 'trajectories.npz')
+        if self.save_rollouts_path[-1] == '/':
+            filename = self.save_rollouts_path + 'trajectories.npz'
+        else:
+            filename = self.save_rollouts_path + '/trajectories.npz'
         
         # [train_steps, n_envs]
         S, N = self.stored_observations.shape[:2]
