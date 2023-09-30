@@ -141,6 +141,6 @@ class DummyVecEnv(VecEnv):
 
 class DarkDummyVecEnv(DummyVecEnv):
     def __init__(self, env_fns: List[Callable[[], gym.Env]], goal_pos: Optional[Dict[str, Any]] = None):
-        super.__init__(env_fns)
+        super().__init__(env_fns)
         for vec_env_rank, goal_pos_value in enumerate(goal_pos):
             self.envs[vec_env_rank].goal_pos = goal_pos_value
