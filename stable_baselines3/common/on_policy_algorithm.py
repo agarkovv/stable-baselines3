@@ -102,7 +102,7 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         self.vf_coef = vf_coef
         self.max_grad_norm = max_grad_norm
         # FIXME
-        self.goal_pos = env.goal_pos
+        self.goal_pos = env.envs[0].goal_pos
 
         self.save_rollouts_path=save_rollouts_path
 
