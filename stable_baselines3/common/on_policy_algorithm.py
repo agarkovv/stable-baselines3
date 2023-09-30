@@ -101,6 +101,8 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         self.ent_coef = ent_coef
         self.vf_coef = vf_coef
         self.max_grad_norm = max_grad_norm
+        # FIXME
+        self.goal_pos = env.goal_pos
 
         self.save_rollouts_path=save_rollouts_path
 
@@ -121,6 +123,7 @@ class OnPolicyAlgorithm(BaseAlgorithm):
             gamma=self.gamma,
             gae_lambda=self.gae_lambda,
             n_envs=self.n_envs,
+            goal_pos=self.goal_pos,
             save_rollouts_path=self.save_rollouts_path
         )
         # pytype:disable=not-instantiable

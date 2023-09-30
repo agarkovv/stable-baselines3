@@ -522,6 +522,7 @@ class RolloutBuffer(BaseBuffer):
             states=self.stored_observations.reshape((S*N, -1), order='F'),
             actions=self.stored_actions.reshape((S*N, -1), order='F'),
             rewards=self.stored_rewards.reshape((S*N, -1), order='F'),
+            goal=np.asarray(self.goal_pos),
         )
 
         return os.path.basename(filename)
