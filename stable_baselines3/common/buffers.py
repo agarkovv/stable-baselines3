@@ -377,7 +377,12 @@ class RolloutBuffer(BaseBuffer):
         self.gae_lambda = gae_lambda
         self.gamma = gamma
         self.generator_ready = False
+        
         self.save_rollouts_path = save_rollouts_path
+        self.stored_observations = np.empty((0, self.n_envs, *self.obs_shape), dtype=np.float32)
+        self.stored_actions = np.empty((0, self.n_envs, self.action_dim), dtype=np.float32)
+        self.stored_rewards = np.empty((0, self.n_envs), dtype=np.float32)
+
         self.reset()
 
     def reset(self) -> None:
@@ -390,15 +395,6 @@ class RolloutBuffer(BaseBuffer):
         self.log_probs = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.advantages = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.generator_ready = False
-
-        self.stored_observations = np.empty((0, self.n_envs, *self.obs_shape), dtype=np.float32)
-        self.stored_actions = np.empty((0, self.n_envs, self.action_dim), dtype=np.float32)
-        self.stored_rewards = np.empty((0, self.n_envs), dtype=np.float32)
-        # self.stored_returns = np.zeros((0, self.n_envs), dtype=np.float32)
-        # self.stored_episode_starts = np.zeros((0, self.n_envs), dtype=np.float32)
-        # self.stored_values = np.zeros((0, self.n_envs), dtype=np.float32)
-        # self.stored_log_probs = np.zeros((0, self.n_envs), dtype=np.float32)
-        # self.stored_advantages = np.zeros((0, self.n_envs), dtype=np.float32)
         super().reset()
 
     def compute_returns_and_advantage(self, last_values: th.Tensor, dones: np.ndarray) -> None:
