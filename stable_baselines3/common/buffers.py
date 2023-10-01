@@ -515,7 +515,7 @@ class RolloutBuffer(BaseBuffer):
         metadata = {
             "algorithm": "Q-learning",
             "label": "label",
-            "ordered_trajectories": save_filenames,
+            "ordered_trajectories": [save_filenames],
             "goal": goal_pos.tolist()
         }
         with open(os.path.join(savedir, 'metadata.metadata'), mode="w") as f:
