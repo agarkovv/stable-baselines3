@@ -17,6 +17,7 @@ from stable_baselines3.common.utils import get_device
 from stable_baselines3.common.vec_env import VecNormalize
 import os
 import uuid
+import json
 
 try:
     # Check memory used by replay buffer when possible
@@ -510,6 +511,16 @@ class RolloutBuffer(BaseBuffer):
         self.stored_actions = np.concatenate((self.stored_actions, self.actions), axis=0)
         self.stored_rewards = np.concatenate((self.stored_rewards, self.rewards), axis=0)
 
+    def save_metadata(savedir, goal_pos, save_filenames):
+        metadata = {
+            "algorithm": "Q-learning",
+            "label": "label",
+            "ordered_trajectories": save_filenames,
+            "goal": goal_pos.tolist()
+        }
+        with open(os.path.join(savedir, 'metadata.metadata'), mode="w") as f:
+            json.dump(metadata, f, indent=2)
+
     def os_store(self):
         id = uuid.uuid4()
         if self.save_rollouts_path[-1] == '/':
@@ -526,6 +537,8 @@ class RolloutBuffer(BaseBuffer):
             rewards=self.stored_rewards.reshape((S*N, -1), order='F'),
             goal=np.asarray(self.goal_pos),
         )
+
+        self.save_metadata(self.save_rollouts_path, self.goal_pos, os.path.basename(filename))
 
         return os.path.basename(filename)
 
