@@ -513,7 +513,7 @@ class RolloutBuffer(BaseBuffer):
 
     def save_metadata(self, savedir, goal_pos, save_filenames):
         metadata = {
-            "algorithm": "Q-learning",
+            "algorithm": "A2C",
             "label": "label",
             "ordered_trajectories": [save_filenames],
             "goal": goal_pos.tolist()
