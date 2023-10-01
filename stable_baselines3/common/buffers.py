@@ -511,7 +511,7 @@ class RolloutBuffer(BaseBuffer):
         self.stored_actions = np.concatenate((self.stored_actions, self.actions), axis=0)
         self.stored_rewards = np.concatenate((self.stored_rewards, self.rewards), axis=0)
 
-    def save_metadata(savedir, goal_pos, save_filenames):
+    def save_metadata(self, savedir, goal_pos, save_filenames):
         metadata = {
             "algorithm": "Q-learning",
             "label": "label",
