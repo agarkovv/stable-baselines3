@@ -301,7 +301,8 @@ class OnPolicyAlgorithm(BaseAlgorithm):
         callback.on_training_end()
         if self.save_rollouts_path is not None:
             self.rollout_buffer.os_store()
-
+        if self.device == 'cuda':
+            th.cuda.empty_cache()
         return self
 
     def _get_torch_save_params(self) -> Tuple[List[str], List[str]]:
